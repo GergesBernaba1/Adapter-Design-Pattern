@@ -1,0 +1,94 @@
+
+
+namespace AdapterMediaPlayer
+{
+    public class Main
+    {
+        public static void main(string[] args)
+        {
+            AudioPalyer audioPalyer = new AudioPalyer();
+            audioPalyer.play("MP3", "ASALAA.MP3");
+            audioPalyer.play("Vlc", "The100.Vlc");
+            audioPalyer.play("Avi", "MrRobot.avi");
+            audioPalyer.play("MP4", "KAzem.MP4");
+        }
+    }
+    public interface IMediaPalyer
+    {
+        public void play(string AudioType, string FileName);
+    }
+    public interface IAdvancedMediaPlayer
+    {
+        public void PlayVlc(string FileName);
+        public void PlayMP4(string FileName);
+    }
+    public class MP4Player : IAdvancedMediaPlayer
+    {
+        public void PlayMP4(string FileName)
+        {
+            Console.WriteLine("Playing MP4 File" + FileName);
+        }
+        public void PlayVlc(string FileName)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class VlcPlayer : IAdvancedMediaPlayer
+    {
+        public void PlayMP4(string FileName)
+        {
+            throw new NotImplementedException();
+        }
+        public void PlayVlc(string FileName)
+        {
+            Console.WriteLine("Playing Vlc File" + FileName);
+        }  
+    }
+    public class Adapter : IMediaPalyer
+    {
+        IAdvancedMediaPlayer advancedMediaPlayer;
+        public Adapter(string AudioType)
+        {
+            if (AudioType.Equals("Vlc"))
+            {
+                advancedMediaPlayer = new VlcPlayer();
+            }
+            else if (AudioType.Equals("MP4"))
+            {
+                advancedMediaPlayer = new MP4Player();
+            }
+        }
+        public void play(string AudioType, string FileName)
+        {
+            if (AudioType.Equals("Vlc"))
+            {
+                advancedMediaPlayer.PlayVlc(FileName);
+            }
+            else if (AudioType.Equals("MP4"))
+            {
+                advancedMediaPlayer.PlayMP4(FileName);
+            }
+        }
+    }
+    public class AudioPalyer : IMediaPalyer
+    {
+        Adapter? adapter;
+        public void play(string AudioType, string FileName)
+        {
+            if (AudioType.Equals("MP3"))
+            {
+                Console.WriteLine("Playing MP3 file" + FileName);
+            }
+            else if (AudioType =="Vlc" || AudioType == "MP4" ) 
+            {
+                adapter = new Adapter(AudioType);
+                adapter.play(AudioType, FileName);
+            }
+            else
+            {
+                Console.WriteLine("Invalid media " + AudioType + " format not supported");
+            }
+        }
+    }
+
+}
